@@ -4,1245 +4,160 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>在庫管理</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f5f7fb;
-  color: #1f2937;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.header {
-  background: #111827;
-  color: white;
-  padding: 18px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.header span {
-  font-size: 13px;
-  color: #9ca3af;
-}
-
-.container {
-  max-width: 1400px;
-  margin: auto;
-  padding: 24px;
-}
-
-.nav {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  overflow-x: auto;
-}
-
-.nav button {
-  border: 0;
-  background: white;
-  padding: 11px 18px;
-  border-radius: 10px;
-  color: #6b7280;
-  white-space: nowrap;
-}
-
-.nav button.active {
-  background: #111827;
-  color: white;
-}
-
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
-
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
-}
-
-.card-title {
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.card-number {
-  font-size: 30px;
-  font-weight: 700;
-}
-
-.red {
-  color: #ef4444;
-}
-
-.orange {
-  color: #f59e0b;
-}
-
-.green {
-  color: #10b981;
-}
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.section-title h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.btn {
-  border: 0;
-  border-radius: 9px;
-  padding: 10px 16px;
-  font-weight: 600;
-}
-
-.btn-primary {
-  background: #111827;
-  color: white;
-}
-
-.btn-green {
-  background: #10b981;
-  color: white;
-}
-
-.btn-red {
-  background: #ef4444;
-  color: white;
-}
-
-.btn-gray {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.toolbar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.search {
-  flex: 1;
-  min-width: 220px;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 9px;
-  padding: 11px 12px;
-  background: white;
-  outline: none;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #111827;
-}
-
-.table-wrap {
-  background: white;
-  border-radius: 14px;
-  overflow-x: auto;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-th,
-td {
-  padding: 14px 16px;
-  text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-th {
-  font-size: 12px;
-  color: #6b7280;
-  background: #fafafa;
-}
-
-td {
-  font-size: 14px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-green {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.badge-orange {
-  background: #fef3c7;
-  color: #b45309;
-}
-
-.badge-red {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.actions button {
-  border: 0;
-  padding: 7px 10px;
-  border-radius: 7px;
-  font-size: 12px;
-}
-
-.empty {
-  text-align: center;
-  padding: 50px 20px;
-  color: #9ca3af;
-}
-
-.modal-bg {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.modal-bg.show {
-  display: flex;
-}
-
-.modal {
-  background: white;
-  width: 100%;
-  max-width: 550px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.modal h2 {
-  margin-top: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group.full {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.stock-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.stock-buttons button {
-  flex: 1;
-}
-
-.recent {
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
-}
-
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 13px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.history-item:last-child {
-  border-bottom: 0;
-}
-
-.history-name {
-  font-weight: 600;
-}
-
-.history-detail {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 3px;
-}
-
-.plus {
-  color: #10b981;
-  font-weight: 700;
-}
-
-.minus {
-  color: #ef4444;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .dashboard {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 14px;
-  }
-
-  .header {
-    padding: 15px;
-  }
-
-  .dashboard {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-
-  .card-number {
-    font-size: 24px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-group.full {
-    grid-column: auto;
-  }
-}
+*{box-sizing:border-box}
+:root{--dark:#111827;--green:#10b981;--red:#ef4444;--orange:#f59e0b;--blue:#2563eb;--bg:#f5f7fb;--border:#e5e7eb;--muted:#6b7280}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:#1f2937}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.header{position:sticky;top:0;z-index:50;background:var(--dark);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.header h1{margin:0;font-size:21px}.header small{color:#9ca3af;font-size:12px}.header-actions{display:flex;gap:8px;align-items:center}.header .btn{background:#fff;color:#111827}
+.container{max-width:1400px;margin:auto;padding:22px}
+.nav{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;position:sticky;top:68px;z-index:20;padding:4px 0;background:var(--bg)}
+.nav button{border:0;background:#fff;padding:11px 17px;border-radius:10px;color:var(--muted);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.nav button.active{background:var(--dark);color:#fff}.page{display:none}.page.active{display:block}
+.dashboard{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.04);cursor:pointer;transition:.15s}.card:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,.08)}
+.card-title{color:var(--muted);font-size:12px;margin-bottom:7px}.card-number{font-size:27px;font-weight:700}.red{color:var(--red)}.orange{color:var(--orange)}.green{color:var(--green)}.blue{color:var(--blue)}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.section-title h2{margin:0;font-size:20px}
+.btn{border:0;border-radius:9px;padding:10px 15px;font-weight:600}.btn-primary{background:var(--dark);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-gray{background:#e5e7eb;color:#374151}.btn-blue{background:var(--blue);color:#fff}.btn-small{padding:7px 10px;font-size:12px}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.search{flex:1;min-width:220px}.toolbar select{width:auto;min-width:150px}
+input,select,textarea{width:100%;border:1px solid #d1d5db;border-radius:9px;padding:10px 11px;background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(37,99,235,.08)}
+.table-wrap{background:#fff;border-radius:14px;overflow:auto;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #f0f0f0}th{font-size:12px;color:var(--muted);background:#fafafa;position:sticky;top:0;z-index:1}td{font-size:14px}tbody tr:hover{background:#fafcff}.row-out{background:#fff7f7}.row-low{background:#fffaf0}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:600}.badge-green{background:#dcfce7;color:#15803d}.badge-orange{background:#fef3c7;color:#b45309}.badge-red{background:#fee2e2;color:#b91c1c}
+.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{border:0;padding:7px 9px;border-radius:7px;font-size:12px}.quick{display:inline-flex;align-items:center;gap:3px}.quick button{width:29px;height:29px;padding:0;border-radius:7px;border:1px solid #d1d5db;background:#fff}.quick button:hover{background:#f3f4f6}
+.empty{text-align:center;padding:45px 20px;color:#9ca3af}.recent,.panel{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0}.history-item:last-child{border-bottom:0}.history-name{font-weight:600}.history-detail{font-size:12px;color:var(--muted);margin-top:3px}.plus{color:var(--green);font-weight:700}.minus{color:var(--red);font-weight:700}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:100;align-items:center;justify-content:center;padding:20px}.modal-bg.show{display:flex}.modal{background:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:16px;padding:22px}.modal h2{margin:0 0 18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-group{margin-bottom:12px}.form-group.full{grid-column:1/-1}.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}.modal-buttons{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.stock-buttons{display:flex;gap:8px}.stock-buttons button{flex:1;font-size:17px;padding:13px}
+.notice{font-size:12px;color:var(--muted);margin-top:8px}.dashboard-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}.shortcut-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.shortcut{padding:14px;border:1px solid var(--border);border-radius:12px;background:#fff;text-align:left}.shortcut strong{display:block;margin-bottom:4px}.shortcut span{font-size:12px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;z-index:200;background:#111827;color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 8px 25px rgba(0,0,0,.18);opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+.file-input{display:none}
+@media(max-width:1050px){.dashboard{grid-template-columns:repeat(3,1fr)}.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.container{padding:12px}.header{padding:12px 14px}.header small{display:none}.nav{top:57px}.dashboard{grid-template-columns:1fr 1fr;gap:9px}.card{padding:14px}.card-number{font-size:23px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.shortcut-grid{grid-template-columns:1fr}.section-title{align-items:flex-start}.toolbar select{flex:1}.header-actions .btn{padding:8px 10px;font-size:12px}}
 </style>
 </head>
-
 <body>
-
 <header class="header">
-  <div>
-    <h1>📦 在庫管理</h1>
-  </div>
-  <span>Inventory Management</span>
+  <div><h1>📦 在庫管理</h1><small>Inventory Management</small></div>
+  <div class="header-actions"><button class="btn btn-small" onclick="openProductModal()">＋ 商品登録</button></div>
 </header>
-
 <div class="container">
+<nav class="nav">
+  <button class="active" onclick="showPage('dashboard',this)">🏠 ダッシュボード</button>
+  <button onclick="showPage('products',this)">📦 商品一覧</button>
+  <button onclick="showPage('history',this)">↕ 入出庫履歴</button>
+  <button onclick="showPage('orders',this)">⚠ 発注リスト</button>
+</nav>
 
-  <nav class="nav">
-    <button class="active" onclick="showPage('dashboard', this)">ダッシュボード</button>
-    <button onclick="showPage('products', this)">商品一覧</button>
-    <button onclick="showPage('history', this)">入出庫履歴</button>
-    <button onclick="showPage('orders', this)">発注リスト</button>
-  </nav>
-
-  <!-- ダッシュボード -->
-  <section id="dashboard" class="page active">
-
-    <div class="dashboard">
-
-      <div class="card">
-        <div class="card-title">商品数</div>
-        <div class="card-number" id="totalProducts">0</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">在庫切れ</div>
-        <div class="card-number red" id="outOfStock">0</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">残りわずか</div>
-        <div class="card-number orange" id="lowStock">0</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">在庫金額</div>
-        <div class="card-number green" id="stockValue">¥0</div>
-      </div>
-
-    </div>
-
-    <div class="recent">
-      <div class="section-title">
-        <h2>最近の入出庫</h2>
-      </div>
-
-      <div id="recentHistory"></div>
-    </div>
-
-  </section>
-
-  <!-- 商品一覧 -->
-  <section id="products" class="page">
-
-    <div class="section-title">
-      <h2>商品一覧</h2>
-      <button class="btn btn-primary" onclick="openProductModal()">
-        ＋ 商品登録
-      </button>
-    </div>
-
-    <div class="toolbar">
-      <input
-        class="search"
-        id="searchInput"
-        placeholder="商品名を検索..."
-        oninput="renderProducts()"
-      >
-
-      <select id="categoryFilter" onchange="renderProducts()">
-        <option value="">すべてのカテゴリ</option>
-      </select>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>商品名</th>
-            <th>カテゴリ</th>
-            <th>在庫</th>
-            <th>最低在庫</th>
-            <th>仕入価格</th>
-            <th>状態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="productTable"></tbody>
-      </table>
-    </div>
-
-  </section>
-
-  <!-- 履歴 -->
-  <section id="history" class="page">
-
-    <div class="section-title">
-      <h2>入出庫履歴</h2>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>日時</th>
-            <th>商品</th>
-            <th>種類</th>
-            <th>数量</th>
-            <th>変更後在庫</th>
-            <th>メモ</th>
-          </tr>
-        </thead>
-        <tbody id="historyTable"></tbody>
-      </table>
-    </div>
-
-  </section>
-
-  <!-- 発注リスト -->
-  <section id="orders" class="page">
-
-    <div class="section-title">
-      <h2>発注リスト</h2>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>商品名</th>
-            <th>カテゴリ</th>
-            <th>現在庫</th>
-            <th>最低在庫</th>
-            <th>不足数</th>
-            <th>状態</th>
-          </tr>
-        </thead>
-        <tbody id="orderTable"></tbody>
-      </table>
-    </div>
-
-  </section>
-
-</div>
-
-<!-- 商品登録モーダル -->
-<div class="modal-bg" id="productModal">
-
-  <div class="modal">
-
-    <h2 id="productModalTitle">商品登録</h2>
-
-    <input type="hidden" id="editProductId">
-
-    <div class="form-grid">
-
-      <div class="form-group full">
-        <label>商品名 *</label>
-        <input id="productName" placeholder="例：コカ・コーラ">
-      </div>
-
-      <div class="form-group">
-        <label>カテゴリ</label>
-        <input id="productCategory" placeholder="例：ソフトドリンク">
-      </div>
-
-      <div class="form-group">
-        <label>単位</label>
-        <input id="productUnit" placeholder="例：本">
-      </div>
-
-      <div class="form-group">
-        <label>現在庫</label>
-        <input id="productStock" type="number" min="0" value="0">
-      </div>
-
-      <div class="form-group">
-        <label>最低在庫</label>
-        <input id="productMinStock" type="number" min="0" value="0">
-      </div>
-
-      <div class="form-group">
-        <label>仕入価格</label>
-        <input id="productPrice" type="number" min="0" value="0">
-      </div>
-
-      <div class="form-group">
-        <label>仕入先</label>
-        <input id="productSupplier" placeholder="例：○○商店">
-      </div>
-
-      <div class="form-group full">
-        <label>メモ</label>
-        <textarea id="productMemo" rows="3"></textarea>
-      </div>
-
-    </div>
-
-    <div class="modal-buttons">
-      <button class="btn btn-gray" onclick="closeProductModal()">キャンセル</button>
-      <button class="btn btn-primary" onclick="saveProduct()">保存</button>
-    </div>
-
+<section id="dashboard" class="page active">
+  <div class="dashboard">
+    <div class="card" onclick="showProducts()"><div class="card-title">商品数</div><div class="card-number" id="totalProducts">0</div></div>
+    <div class="card" onclick="showProducts('out')"><div class="card-title">在庫切れ</div><div class="card-number red" id="outOfStock">0</div></div>
+    <div class="card" onclick="showProducts('low')"><div class="card-title">残りわずか</div><div class="card-number orange" id="lowStock">0</div></div>
+    <div class="card" onclick="showOrders()"><div class="card-title">発注が必要</div><div class="card-number blue" id="orderCount">0</div></div>
+    <div class="card"><div class="card-title">在庫金額</div><div class="card-number green" id="stockValue">¥0</div></div>
   </div>
-
-</div>
-
-<!-- 入出庫モーダル -->
-<div class="modal-bg" id="stockModal">
-
-  <div class="modal">
-
-    <h2 id="stockModalTitle">在庫変更</h2>
-
-    <input type="hidden" id="stockProductId">
-    <input type="hidden" id="stockType">
-
-    <div class="form-group">
-      <label>商品</label>
-      <input id="stockProductName" readonly>
+  <div class="dashboard-grid">
+    <div class="recent"><div class="section-title"><h2>最近の入出庫</h2><button class="btn btn-gray btn-small" onclick="showHistory()">履歴を見る</button></div><div id="recentHistory"></div></div>
+    <div class="panel"><div class="section-title"><h2>よく使う操作</h2></div>
+      <div class="shortcut-grid">
+        <button class="shortcut" onclick="openProductModal()"><strong>＋ 商品を登録</strong><span>新しい商品を追加</span></button>
+        <button class="shortcut" onclick="showProducts()"><strong>📦 在庫を確認</strong><span>検索・入出庫・編集</span></button>
+        <button class="shortcut" onclick="showOrders()"><strong>⚠ 発注を確認</strong><span>不足商品を一覧表示</span></button>
+        <button class="shortcut" onclick="exportData()"><strong>💾 データ保存</strong><span>バックアップを書き出す</span></button>
+        <button class="shortcut" onclick="document.getElementById('importFile').click()"><strong>📂 データ復元</strong><span>バックアップを読み込む</span></button>
+        <button class="shortcut" onclick="showHistory()"><strong>↕ 履歴を見る</strong><span>入出庫の記録を確認</span></button>
+      </div>
+      <div class="notice">※データは現在のブラウザに保存されます。別PC・スマホでも使う場合はバックアップ機能を利用してください。</div>
     </div>
-
-    <div class="form-group">
-      <label>数量</label>
-      <input id="stockQuantity" type="number" min="1" value="1">
-    </div>
-
-    <div class="form-group">
-      <label>メモ</label>
-      <textarea id="stockMemo" rows="3" placeholder="必要なら入力"></textarea>
-    </div>
-
-    <div class="modal-buttons">
-      <button class="btn btn-gray" onclick="closeStockModal()">キャンセル</button>
-      <button class="btn btn-primary" onclick="saveStockChange()">確定</button>
-    </div>
-
   </div>
+</section>
 
+<section id="products" class="page">
+  <div class="section-title"><h2>商品一覧</h2><button class="btn btn-primary" onclick="openProductModal()">＋ 商品登録</button></div>
+  <div class="toolbar">
+    <input class="search" id="searchInput" placeholder="商品名・カテゴリ・仕入先を検索..." oninput="renderProducts()">
+    <select id="categoryFilter" onchange="renderProducts()"><option value="">すべてのカテゴリ</option></select>
+    <select id="statusFilter" onchange="renderProducts()"><option value="">すべての状態</option><option value="normal">正常</option><option value="low">残りわずか</option><option value="out">在庫切れ</option></select>
+    <select id="sortFilter" onchange="renderProducts()"><option value="name">商品名順</option><option value="stockAsc">在庫が少ない順</option><option value="stockDesc">在庫が多い順</option><option value="priceDesc">仕入価格が高い順</option></select>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>商品名</th><th>カテゴリ</th><th>在庫</th><th>最低在庫</th><th>仕入価格</th><th>状態</th><th>操作</th></tr></thead><tbody id="productTable"></tbody></table></div>
+</section>
+
+<section id="history" class="page">
+  <div class="section-title"><h2>入出庫履歴</h2><button class="btn btn-gray btn-small" onclick="clearHistory()">履歴を全削除</button></div>
+  <div class="toolbar"><input class="search" id="historySearch" placeholder="商品名・メモを検索..." oninput="renderHistory()"><select id="historyType" onchange="renderHistory()"><option value="">入庫・出庫すべて</option><option value="in">入庫</option><option value="out">出庫</option></select></div>
+  <div class="table-wrap"><table><thead><tr><th>日時</th><th>商品</th><th>種類</th><th>数量</th><th>変更後在庫</th><th>メモ</th></tr></thead><tbody id="historyTable"></tbody></table></div>
+</section>
+
+<section id="orders" class="page">
+  <div class="section-title"><h2>発注リスト</h2><button class="btn btn-blue" onclick="showProducts('low')">商品一覧で確認</button></div>
+  <div class="table-wrap"><table><thead><tr><th>商品名</th><th>カテゴリ</th><th>現在庫</th><th>最低在庫</th><th>不足数</th><th>状態</th><th>操作</th></tr></thead><tbody id="orderTable"></tbody></table></div>
+</section>
 </div>
+
+<div class="modal-bg" id="productModal"><div class="modal">
+<h2 id="productModalTitle">商品登録</h2><input type="hidden" id="editProductId">
+<div class="form-grid">
+<div class="form-group full"><label>商品名 *</label><input id="productName" placeholder="例：コカ・コーラ"></div>
+<div class="form-group"><label>カテゴリ</label><input id="productCategory" placeholder="例：ソフトドリンク"></div>
+<div class="form-group"><label>単位</label><input id="productUnit" placeholder="例：本"></div>
+<div class="form-group"><label>現在庫</label><input id="productStock" type="number" min="0" value="0"></div>
+<div class="form-group"><label>最低在庫</label><input id="productMinStock" type="number" min="0" value="0"></div>
+<div class="form-group"><label>仕入価格</label><input id="productPrice" type="number" min="0" value="0"></div>
+<div class="form-group"><label>仕入先</label><input id="productSupplier" placeholder="例：○○商店"></div>
+<div class="form-group full"><label>メモ</label><textarea id="productMemo" rows="3"></textarea></div>
+</div>
+<div class="modal-buttons"><button class="btn btn-gray" onclick="closeProductModal()">キャンセル</button><button class="btn btn-primary" onclick="saveProduct()">保存</button></div>
+</div></div>
+
+<div class="modal-bg" id="stockModal"><div class="modal">
+<h2 id="stockModalTitle">在庫変更</h2><input type="hidden" id="stockProductId"><input type="hidden" id="stockType">
+<div class="form-group"><label>商品</label><input id="stockProductName" readonly></div>
+<div class="form-group"><label>数量</label><input id="stockQuantity" type="number" min="1" value="1"></div>
+<div class="stock-buttons"><button class="btn btn-green" onclick="setStockType('in')">📥 入庫</button><button class="btn btn-red" onclick="setStockType('out')">📤 出庫</button></div>
+<div class="form-group" style="margin-top:12px"><label>メモ</label><textarea id="stockMemo" rows="3" placeholder="必要なら入力"></textarea></div>
+<div class="modal-buttons"><button class="btn btn-gray" onclick="closeStockModal()">キャンセル</button><button class="btn btn-primary" onclick="saveStockChange()">確定</button></div>
+</div></div>
+
+<input id="importFile" class="file-input" type="file" accept="application/json" onchange="importData(event)">
+<div id="toast" class="toast"></div>
 
 <script>
-
-let products = JSON.parse(localStorage.getItem("inventory_products") || "[]");
-let history = JSON.parse(localStorage.getItem("inventory_history") || "[]");
-
-function saveData() {
-  localStorage.setItem("inventory_products", JSON.stringify(products));
-  localStorage.setItem("inventory_history", JSON.stringify(history));
-}
-
-function showPage(pageId, button) {
-
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
-
-  document.getElementById(pageId).classList.add("active");
-
-  document.querySelectorAll(".nav button").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  button.classList.add("active");
-
-  updateAll();
-}
-
-function openProductModal(id = null) {
-
-  document.getElementById("productModal").classList.add("show");
-
-  if (id) {
-
-    const product = products.find(p => p.id === id);
-
-    document.getElementById("productModalTitle").textContent = "商品編集";
-    document.getElementById("editProductId").value = id;
-    document.getElementById("productName").value = product.name;
-    document.getElementById("productCategory").value = product.category;
-    document.getElementById("productUnit").value = product.unit;
-    document.getElementById("productStock").value = product.stock;
-    document.getElementById("productMinStock").value = product.minStock;
-    document.getElementById("productPrice").value = product.price;
-    document.getElementById("productSupplier").value = product.supplier;
-    document.getElementById("productMemo").value = product.memo;
-
-  } else {
-
-    document.getElementById("productModalTitle").textContent = "商品登録";
-    document.getElementById("editProductId").value = "";
-    document.getElementById("productName").value = "";
-    document.getElementById("productCategory").value = "";
-    document.getElementById("productUnit").value = "";
-    document.getElementById("productStock").value = 0;
-    document.getElementById("productMinStock").value = 0;
-    document.getElementById("productPrice").value = 0;
-    document.getElementById("productSupplier").value = "";
-    document.getElementById("productMemo").value = "";
-  }
-}
-
-function closeProductModal() {
-  document.getElementById("productModal").classList.remove("show");
-}
-
-function saveProduct() {
-
-  const name = document.getElementById("productName").value.trim();
-
-  if (!name) {
-    alert("商品名を入力してください。");
-    return;
-  }
-
-  const id = document.getElementById("editProductId").value;
-
-  const data = {
-    name,
-    category: document.getElementById("productCategory").value.trim() || "未分類",
-    unit: document.getElementById("productUnit").value.trim() || "個",
-    stock: Number(document.getElementById("productStock").value) || 0,
-    minStock: Number(document.getElementById("productMinStock").value) || 0,
-    price: Number(document.getElementById("productPrice").value) || 0,
-    supplier: document.getElementById("productSupplier").value.trim(),
-    memo: document.getElementById("productMemo").value.trim()
-  };
-
-  if (id) {
-
-    const index = products.findIndex(p => p.id === id);
-
-    if (index !== -1) {
-      products[index] = {
-        ...products[index],
-        ...data
-      };
-    }
-
-  } else {
-
-    products.push({
-      id: Date.now().toString(),
-      ...data,
-      createdAt: new Date().toISOString()
-    });
-
-  }
-
-  saveData();
-  closeProductModal();
-  updateAll();
-}
-
-function deleteProduct(id) {
-
-  const product = products.find(p => p.id === id);
-
-  if (!product) return;
-
-  if (!confirm(`「${product.name}」を削除しますか？`)) {
-    return;
-  }
-
-  products = products.filter(p => p.id !== id);
-
-  saveData();
-  updateAll();
-}
-
-function openStockModal(id, type) {
-
-  const product = products.find(p => p.id === id);
-
-  if (!product) return;
-
-  document.getElementById("stockModal").classList.add("show");
-  document.getElementById("stockProductId").value = id;
-  document.getElementById("stockType").value = type;
-  document.getElementById("stockProductName").value = product.name;
-  document.getElementById("stockQuantity").value = 1;
-  document.getElementById("stockMemo").value = "";
-
-  document.getElementById("stockModalTitle").textContent =
-    type === "in" ? "📥 入庫" : "📤 出庫";
-}
-
-function closeStockModal() {
-  document.getElementById("stockModal").classList.remove("show");
-}
-
-function saveStockChange() {
-
-  const id = document.getElementById("stockProductId").value;
-  const type = document.getElementById("stockType").value;
-  const quantity = Number(document.getElementById("stockQuantity").value);
-
-  if (!quantity || quantity <= 0) {
-    alert("数量を入力してください。");
-    return;
-  }
-
-  const product = products.find(p => p.id === id);
-
-  if (!product) return;
-
-  if (type === "out" && quantity > product.stock) {
-    alert("在庫数を超えて出庫することはできません。");
-    return;
-  }
-
-  if (type === "in") {
-    product.stock += quantity;
-  } else {
-    product.stock -= quantity;
-  }
-
-  history.unshift({
-    id: Date.now().toString(),
-    productId: product.id,
-    productName: product.name,
-    type,
-    quantity,
-    afterStock: product.stock,
-    memo: document.getElementById("stockMemo").value.trim(),
-    date: new Date().toISOString()
-  });
-
-  saveData();
-  closeStockModal();
-  updateAll();
-}
-
-function getStatus(product) {
-
-  if (product.stock <= 0) {
-    return {
-      text: "在庫切れ",
-      class: "badge-red"
-    };
-  }
-
-  if (product.stock <= product.minStock) {
-    return {
-      text: "残りわずか",
-      class: "badge-orange"
-    };
-  }
-
-  return {
-    text: "正常",
-    class: "badge-green"
-  };
-}
-
-function renderProducts() {
-
-  const tbody = document.getElementById("productTable");
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const category = document.getElementById("categoryFilter").value;
-
-  let list = products.filter(product => {
-
-    const matchSearch =
-      product.name.toLowerCase().includes(search);
-
-    const matchCategory =
-      !category || product.category === category;
-
-    return matchSearch && matchCategory;
-  });
-
-  if (list.length === 0) {
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty">
-            商品がありません
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-  tbody.innerHTML = list.map(product => {
-
-    const status = getStatus(product);
-
-    return `
-      <tr>
-
-        <td>
-          <strong>${escapeHtml(product.name)}</strong>
-          <div style="font-size:11px;color:#9ca3af;">
-            ${escapeHtml(product.supplier || "")}
-          </div>
-        </td>
-
-        <td>${escapeHtml(product.category)}</td>
-
-        <td>
-          <strong>${product.stock}</strong>
-          ${escapeHtml(product.unit)}
-        </td>
-
-        <td>
-          ${product.minStock}
-          ${escapeHtml(product.unit)}
-        </td>
-
-        <td>
-          ¥${Number(product.price).toLocaleString()}
-        </td>
-
-        <td>
-          <span class="badge ${status.class}">
-            ${status.text}
-          </span>
-        </td>
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="btn-green"
-              onclick="openStockModal('${product.id}', 'in')">
-              ＋入庫
-            </button>
-
-            <button
-              class="btn-red"
-              onclick="openStockModal('${product.id}', 'out')">
-              −出庫
-            </button>
-
-            <button
-              class="btn-gray"
-              onclick="openProductModal('${product.id}')">
-              編集
-            </button>
-
-            <button
-              class="btn-gray"
-              onclick="deleteProduct('${product.id}')">
-              削除
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
-}
-
-function renderCategories() {
-
-  const select = document.getElementById("categoryFilter");
-  const current = select.value;
-
-  const categories = [...new Set(
-    products.map(product => product.category)
-  )].sort();
-
-  select.innerHTML =
-    `<option value="">すべてのカテゴリ</option>` +
-    categories.map(category =>
-      `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`
-    ).join("");
-
-  select.value = current;
-}
-
-function renderHistory() {
-
-  const tbody = document.getElementById("historyTable");
-
-  if (history.length === 0) {
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6">
-          <div class="empty">
-            入出庫履歴がありません
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-  tbody.innerHTML = history.map(item => {
-
-    const date = new Date(item.date);
-
-    const typeText =
-      item.type === "in" ? "入庫" : "出庫";
-
-    const typeClass =
-      item.type === "in" ? "plus" : "minus";
-
-    const sign =
-      item.type === "in" ? "+" : "-";
-
-    return `
-      <tr>
-
-        <td>
-          ${formatDate(date)}
-        </td>
-
-        <td>
-          <strong>${escapeHtml(item.productName)}</strong>
-        </td>
-
-        <td class="${typeClass}">
-          ${typeText}
-        </td>
-
-        <td class="${typeClass}">
-          ${sign}${item.quantity}
-        </td>
-
-        <td>
-          ${item.afterStock}
-        </td>
-
-        <td>
-          ${escapeHtml(item.memo || "")}
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
-}
-
-function renderOrders() {
-
-  const tbody = document.getElementById("orderTable");
-
-  const orders = products.filter(product =>
-    product.stock <= product.minStock
-  );
-
-  if (orders.length === 0) {
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6">
-          <div class="empty">
-            発注が必要な商品はありません 🎉
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-  tbody.innerHTML = orders.map(product => {
-
-    const shortage =
-      Math.max(product.minStock - product.stock, 0);
-
-    const status = getStatus(product);
-
-    return `
-      <tr>
-
-        <td>
-          <strong>${escapeHtml(product.name)}</strong>
-        </td>
-
-        <td>
-          ${escapeHtml(product.category)}
-        </td>
-
-        <td>
-          ${product.stock}${escapeHtml(product.unit)}
-        </td>
-
-        <td>
-          ${product.minStock}${escapeHtml(product.unit)}
-        </td>
-
-        <td class="red">
-          ${shortage}${escapeHtml(product.unit)}
-        </td>
-
-        <td>
-          <span class="badge ${status.class}">
-            ${status.text}
-          </span>
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
-}
-
-function renderRecentHistory() {
-
-  const box = document.getElementById("recentHistory");
-
-  const recent = history.slice(0, 8);
-
-  if (recent.length === 0) {
-
-    box.innerHTML = `
-      <div class="empty">
-        まだ入出庫履歴がありません
-      </div>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = recent.map(item => {
-
-    const typeText =
-      item.type === "in" ? "入庫" : "出庫";
-
-    const typeClass =
-      item.type === "in" ? "plus" : "minus";
-
-    const sign =
-      item.type === "in" ? "+" : "-";
-
-    return `
-      <div class="history-item">
-
-        <div>
-          <div class="history-name">
-            ${escapeHtml(item.productName)}
-          </div>
-
-          <div class="history-detail">
-            ${formatDate(new Date(item.date))}
-            ・${typeText}
-          </div>
-        </div>
-
-        <div class="${typeClass}">
-          ${sign}${item.quantity}
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
-}
-
-function updateDashboard() {
-
-  const total = products.length;
-
-  const out =
-    products.filter(p => p.stock <= 0).length;
-
-  const low =
-    products.filter(p =>
-      p.stock > 0 && p.stock <= p.minStock
-    ).length;
-
-  const value =
-    products.reduce(
-      (sum, p) => sum + p.stock * p.price,
-      0
-    );
-
-  document.getElementById("totalProducts").textContent = total;
-  document.getElementById("outOfStock").textContent = out;
-  document.getElementById("lowStock").textContent = low;
-  document.getElementById("stockValue").textContent =
-    "¥" + value.toLocaleString();
-}
-
-function updateAll() {
-  updateDashboard();
-  renderCategories();
-  renderProducts();
-  renderHistory();
-  renderOrders();
-  renderRecentHistory();
-}
-
-function formatDate(date) {
-
-  return date.toLocaleString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
-function escapeHtml(value) {
-
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-document.getElementById("productModal")
-  .addEventListener("click", function(e) {
-
-    if (e.target === this) {
-      closeProductModal();
-    }
-
-  });
-
-document.getElementById("stockModal")
-  .addEventListener("click", function(e) {
-
-    if (e.target === this) {
-      closeStockModal();
-    }
-
-  });
-
+let products=JSON.parse(localStorage.getItem('inventory_products')||'[]');
+let history=JSON.parse(localStorage.getItem('inventory_history')||'[]');
+function saveData(){localStorage.setItem('inventory_products',JSON.stringify(products));localStorage.setItem('inventory_history',JSON.stringify(history));}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('show'),1800)}
+function showPage(id,button){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(button)button.classList.add('active');updateAll()}
+function navButton(id){return [...document.querySelectorAll('.nav button')].find(b=>b.getAttribute('onclick')?.includes("'"+id+"'"))}
+function showProducts(status=''){showPage('products',navButton('products'));if(status){document.getElementById('statusFilter').value=status}document.getElementById('searchInput').focus();renderProducts()}
+function showOrders(){showPage('orders',navButton('orders'))}
+function showHistory(){showPage('history',navButton('history'))}
+function openProductModal(id=null){document.getElementById('productModal').classList.add('show');if(id){const p=products.find(x=>x.id===id);if(!p)return;document.getElementById('productModalTitle').textContent='商品編集';document.getElementById('editProductId').value=id;document.getElementById('productName').value=p.name;document.getElementById('productCategory').value=p.category;document.getElementById('productUnit').value=p.unit;document.getElementById('productStock').value=p.stock;document.getElementById('productMinStock').value=p.minStock;document.getElementById('productPrice').value=p.price;document.getElementById('productSupplier').value=p.supplier||'';document.getElementById('productMemo').value=p.memo||''}else{document.getElementById('productModalTitle').textContent='商品登録';document.getElementById('editProductId').value='';document.getElementById('productName').value='';document.getElementById('productCategory').value='';document.getElementById('productUnit').value='';document.getElementById('productStock').value=0;document.getElementById('productMinStock').value=0;document.getElementById('productPrice').value=0;document.getElementById('productSupplier').value='';document.getElementById('productMemo').value=''}setTimeout(()=>document.getElementById('productName').focus(),50)}
+function closeProductModal(){document.getElementById('productModal').classList.remove('show')}
+function saveProduct(){const name=document.getElementById('productName').value.trim();if(!name){alert('商品名を入力してください。');return}const id=document.getElementById('editProductId').value;const data={name,category:document.getElementById('productCategory').value.trim()||'未分類',unit:document.getElementById('productUnit').value.trim()||'個',stock:Math.max(0,Number(document.getElementById('productStock').value)||0),minStock:Math.max(0,Number(document.getElementById('productMinStock').value)||0),price:Math.max(0,Number(document.getElementById('productPrice').value)||0),supplier:document.getElementById('productSupplier').value.trim(),memo:document.getElementById('productMemo').value.trim()};if(id){const i=products.findIndex(p=>p.id===id);if(i!==-1)products[i]={...products[i],...data}}else products.push({id:Date.now().toString(),...data,createdAt:new Date().toISOString()});saveData();closeProductModal();updateAll();toast(id?'商品を更新しました':'商品を登録しました')}
+function deleteProduct(id){const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`「${p.name}」を削除しますか？`))return;products=products.filter(x=>x.id!==id);saveData();updateAll();toast('商品を削除しました')}
+function openStockModal(id,type='in'){const p=products.find(x=>x.id===id);if(!p)return;document.getElementById('stockModal').classList.add('show');document.getElementById('stockProductId').value=id;document.getElementById('stockQuantity').value=1;document.getElementById('stockMemo').value='';document.getElementById('stockProductName').value=p.name;setStockType(type);setTimeout(()=>document.getElementById('stockQuantity').focus(),50)}
+function setStockType(type){document.getElementById('stockType').value=type;document.getElementById('stockModalTitle').textContent=type==='in'?'📥 入庫':'📤 出庫'}
+function closeStockModal(){document.getElementById('stockModal').classList.remove('show')}
+function saveStockChange(){const id=document.getElementById('stockProductId').value,type=document.getElementById('stockType').value,q=Math.floor(Number(document.getElementById('stockQuantity').value));if(!q||q<=0){alert('数量を1以上で入力してください。');return}const p=products.find(x=>x.id===id);if(!p)return;if(type==='out'&&q>p.stock){alert(`在庫が足りません。現在庫は${p.stock}${p.unit}です。`);return}if(type==='in')p.stock+=q;else p.stock-=q;history.unshift({id:Date.now().toString(),productId:p.id,productName:p.name,type,quantity:q,afterStock:p.stock,memo:document.getElementById('stockMemo').value.trim(),date:new Date().toISOString()});saveData();closeStockModal();updateAll();toast(type==='in'?`${p.name}を${q}${p.unit}入庫しました`:`${p.name}を${q}${p.unit}出庫しました`)}
+function quickStock(id,type,qty=1){const p=products.find(x=>x.id===id);if(!p)return;if(type==='out'&&p.stock<qty){alert(`在庫が足りません。現在庫は${p.stock}${p.unit}です。`);return}p.stock+=type==='in'?qty:-qty;history.unshift({id:Date.now().toString(),productId:p.id,productName:p.name,type,quantity:qty,afterStock:p.stock,memo:'クイック操作',date:new Date().toISOString()});saveData();updateAll();toast(type==='in'?`＋${qty} ${p.name}`:`−${qty} ${p.name}`)}
+function getStatus(p){if(p.stock<=0)return{text:'在庫切れ',class:'badge-red',key:'out'};if(p.stock<=p.minStock)return{text:'残りわずか',class:'badge-orange',key:'low'};return{text:'正常',class:'badge-green',key:'normal'}}
+function renderProducts(){const tbody=document.getElementById('productTable'),search=(document.getElementById('searchInput').value||'').toLowerCase(),cat=document.getElementById('categoryFilter').value,statusFilter=document.getElementById('statusFilter').value,sort=document.getElementById('sortFilter').value;let list=products.filter(p=>{const hit=[p.name,p.category,p.supplier,p.memo].join(' ').toLowerCase().includes(search);const catHit=!cat||p.category===cat;const st=getStatus(p).key;return hit&&catHit&&(!statusFilter||st===statusFilter)});list.sort((a,b)=>sort==='stockAsc'?a.stock-b.stock:sort==='stockDesc'?b.stock-a.stock:sort==='priceDesc'?b.price-a.price:a.name.localeCompare(b.name,'ja'));if(!list.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty">該当する商品がありません</div></td></tr>';return}tbody.innerHTML=list.map(p=>{const st=getStatus(p),row=st.key==='out'?'row-out':st.key==='low'?'row-low':'';return `<tr class="${row}"><td><strong>${escapeHtml(p.name)}</strong><div style="font-size:11px;color:#9ca3af">${escapeHtml(p.supplier||'')}</div></td><td>${escapeHtml(p.category)}</td><td><div class="quick"><button onclick="quickStock('${p.id}','out')">−</button><strong>${p.stock}${escapeHtml(p.unit)}</strong><button onclick="quickStock('${p.id}','in')">＋</button></div></td><td>${p.minStock}${escapeHtml(p.unit)}</td><td>¥${Number(p.price).toLocaleString()}</td><td><span class="badge ${st.class}">${st.text}</span></td><td><div class="actions"><button class="btn-green" onclick="openStockModal('${p.id}','in')">＋入庫</button><button class="btn-red" onclick="openStockModal('${p.id}','out')">−出庫</button><button class="btn-gray" onclick="openProductModal('${p.id}')">編集</button><button class="btn-gray" onclick="deleteProduct('${p.id}')">削除</button></div></td></tr>`}).join('')}
+function renderCategories(){const s=document.getElementById('categoryFilter'),cur=s.value,cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));s.innerHTML='<option value="">すべてのカテゴリ</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');s.value=cats.includes(cur)?cur:''}
+function renderHistory(){const tbody=document.getElementById('historyTable'),search=(document.getElementById('historySearch').value||'').toLowerCase(),type=document.getElementById('historyType').value,list=history.filter(x=>(!type||x.type===type)&&[x.productName,x.memo].join(' ').toLowerCase().includes(search));if(!list.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">該当する履歴がありません</div></td></tr>';return}tbody.innerHTML=list.map(x=>{const inType=x.type==='in',cls=inType?'plus':'minus',sign=inType?'+':'-';return `<tr><td>${formatDate(new Date(x.date))}</td><td><strong>${escapeHtml(x.productName)}</strong></td><td class="${cls}">${inType?'入庫':'出庫'}</td><td class="${cls}">${sign}${x.quantity}</td><td>${x.afterStock}</td><td>${escapeHtml(x.memo||'')}</td></tr>`}).join('')}
+function renderOrders(){const tbody=document.getElementById('orderTable'),orders=products.filter(p=>p.stock<=p.minStock).sort((a,b)=>a.stock-b.stock);if(!orders.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty">発注が必要な商品はありません 🎉</div></td></tr>';return}tbody.innerHTML=orders.map(p=>{const st=getStatus(p),short=Math.max(p.minStock-p.stock,0);return `<tr class="${st.key==='out'?'row-out':'row-low'}"><td><strong>${escapeHtml(p.name)}</strong><div style="font-size:11px;color:#9ca3af">${escapeHtml(p.supplier||'仕入先未登録')}</div></td><td>${escapeHtml(p.category)}</td><td>${p.stock}${escapeHtml(p.unit)}</td><td>${p.minStock}${escapeHtml(p.unit)}</td><td class="red"><strong>${short}${escapeHtml(p.unit)}</strong></td><td><span class="badge ${st.class}">${st.text}</span></td><td><button class="btn btn-green btn-small" onclick="openStockModal('${p.id}','in')">入庫</button></td></tr>`}).join('')}
+function renderRecentHistory(){const box=document.getElementById('recentHistory'),recent=history.slice(0,8);if(!recent.length){box.innerHTML='<div class="empty">まだ入出庫履歴がありません</div>';return}box.innerHTML=recent.map(x=>{const inType=x.type==='in',cls=inType?'plus':'minus';return `<div class="history-item"><div><div class="history-name">${escapeHtml(x.productName)}</div><div class="history-detail">${formatDate(new Date(x.date))} ・${inType?'入庫':'出庫'}</div></div><div class="${cls}">${inType?'+':'-'}${x.quantity}</div></div>`}).join('')}
+function updateDashboard(){const total=products.length,out=products.filter(p=>p.stock<=0).length,low=products.filter(p=>p.stock>0&&p.stock<=p.minStock).length,orders=products.filter(p=>p.stock<=p.minStock).length,value=products.reduce((s,p)=>s+p.stock*p.price,0);document.getElementById('totalProducts').textContent=total;document.getElementById('outOfStock').textContent=out;document.getElementById('lowStock').textContent=low;document.getElementById('orderCount').textContent=orders;document.getElementById('stockValue').textContent='¥'+value.toLocaleString()}
+function updateAll(){updateDashboard();renderCategories();renderProducts();renderHistory();renderOrders();renderRecentHistory()}
+function formatDate(d){return d.toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+function clearHistory(){if(!history.length)return;if(!confirm('入出庫履歴をすべて削除しますか？\n商品データは削除されません。'))return;history=[];saveData();updateAll();toast('履歴を削除しました')}
+function exportData(){const data={version:2,exportedAt:new Date().toISOString(),products,history};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='在庫管理バックアップ_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('バックアップを保存しました')}
+function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.products)||!Array.isArray(data.history))throw new Error();if(!confirm('現在のデータをバックアップの内容で置き換えますか？'))return;products=data.products;history=data.history;saveData();updateAll();toast('データを復元しました')}catch(err){alert('バックアップファイルを読み込めませんでした。')}};reader.readAsText(file);e.target.value=''}
+['productModal','stockModal'].forEach(id=>document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('show')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeProductModal();closeStockModal()}if(e.key==='Enter'&&document.getElementById('stockModal').classList.contains('show')&&document.activeElement?.id==='stockQuantity')saveStockChange()});
 updateAll();
-
 </script>
-
 </body>
 </html>
